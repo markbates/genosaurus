@@ -18,8 +18,8 @@ gem_spec = Gem::Specification.new do |s|
   s.summary = "#{GEM_NAME}"
   s.description = "#{GEM_NAME} was developed by: markbates"
   s.author = "markbates"
-  #s.email = ""
-  #s.homepage = ""
+  s.email = "mark@markbates.com"
+  s.homepage = "http://www.mackframework.com"
 
   s.test_files = FileList['test/**/*']
 
@@ -36,12 +36,12 @@ gem_spec = Gem::Specification.new do |s|
   #s.add_dependency("", "")
   #s.extensions << ""
   #s.extra_rdoc_files = ["README"]
-  #s.has_rdoc = true
+  s.has_rdoc = true
   #s.platform = "Gem::Platform::Ruby"
   #s.required_ruby_version = ">= 1.8.5"
   #s.requirements << "An ice cold beer."
   #s.requirements << "Some free time!"
-  #s.rubyforge_project = "genosaurus"
+  s.rubyforge_project = GEM_RUBYFORGE_PROJECT
 end
 
 # rake package
@@ -55,7 +55,7 @@ end
 desc "Run test code"
 Rake::TestTask.new(:default) do |t|
   t.libs << "test"
-  t.pattern = 'test/**/*_test.rb'
+  t.pattern = '**/*_test.rb'
   t.verbose = true
 end
 

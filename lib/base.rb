@@ -21,6 +21,7 @@ module Genosaurus
       def run(options = ENV.to_hash)
         gen = self.new(options)
         gen.generate
+        gen
       end
       
     end
@@ -35,7 +36,7 @@ module Genosaurus
       @generator_file_path = nil
       @generator_directory_path = nil
       $".each do |f|
-        if f.match(/\/#{@generator_name_underscore}\.rb$/)
+        if f.match(/#{@generator_name_underscore}\.rb$/)
           @generator_file_path = f
           @generator_directory_path = File.dirname(@generator_file_path)
         end
@@ -58,7 +59,6 @@ module Genosaurus
     def generate
       man = manifest
       man.each_value do |info|
-        puts "info: #{info.inspect}"
         case info["type"]
         when "file"
           template(info["template_path"], info["output_path"])
@@ -78,7 +78,6 @@ module Genosaurus
         man = YAML.load(template.result(binding))
       else
         files = Dir.glob(File.join(generator_directory_path, "**/*.template"))
-        # puts files.inspect
         man = {}
         files.each_with_index do |f, i|
           output_path = f.gsub(File.join(generator_directory_path, "templates"), "")
@@ -91,7 +90,6 @@ module Genosaurus
           }
         end
       end
-      # puts man.inspect
       man
     end
     

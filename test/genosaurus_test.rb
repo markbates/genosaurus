@@ -3,11 +3,11 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class GenosaurusBaseTest < Test::Unit::TestCase
   
   def test_simple_implied_generator
-    hello_file = File.join(TMP, "hello_world.rb")
-    goodbye_file = File.join(TMP, "goodbye_world.rb")
+    hello_file = "hello_world.rb"
+    goodbye_file = "goodbye_world.rb"
     assert !File.exists?(hello_file)
     assert !File.exists?(goodbye_file)
-    HelloGoodbyeGenerator.run("name" => "Mark")
+    @generator = HelloGoodbyeGenerator.run("name" => "Mark")
     assert File.exists?(hello_file)
     assert File.exists?(goodbye_file)
     File.open(hello_file, "r") do |f|
@@ -19,8 +19,8 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   end
 
   def test_simple_implied_manifest
-    hg = HelloGoodbyeGenerator.new("name" => "Mark")
-    manifest = hg.manifest
+    @generator = HelloGoodbyeGenerator.new("name" => "Mark")
+    manifest = @generator.manifest
     assert manifest.is_a?(Hash)
     assert_equal 2, manifest.size
     temp1 = manifest["template_1"]
@@ -35,17 +35,17 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   
   def test_require_param
     assert_raise(Genosaurus::Errors::RequiredGeneratorParameterMissing) { HelloGoodbyeGenerator.new }
-    sg = HelloGoodbyeGenerator.new("name" => :foo)
-    assert_not_nil sg
-    assert_equal :foo, sg.param(:name)    
+    @generator = HelloGoodbyeGenerator.new("name" => :foo)
+    assert_not_nil @generator
+    assert_equal :foo, @generator.param(:name)    
   end
   
   def test_complex_implied_generator
-    album_dir = File.join(TMP, "beatles", "albums")
-    lyrics_file = File.join(TMP, "beatles", "lyrics", "i_am_the_walrus.txt")
+    album_dir = File.join("beatles", "albums")
+    lyrics_file = File.join("beatles", "lyrics", "i_am_the_walrus.txt")
     assert !File.exists?(album_dir)
     assert !File.exists?(lyrics_file)
-    IAmTheWalrusGenerator.run("name" => "i_am_the_walrus")
+    @generator = IAmTheWalrusGenerator.run("name" => "i_am_the_walrus")
     assert File.exists?(album_dir)
     assert File.exists?(lyrics_file) 
     File.open(lyrics_file, "r") do |f|
@@ -54,8 +54,8 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   end
   
   def test_simple_yml_manifest
-    sfg = StrawberryFieldsGenerator.new
-    manifest = sfg.manifest
+    @generator = StrawberryFieldsGenerator.new
+    manifest = @generator.manifest
     assert manifest.is_a?(Hash)
     assert_equal 2, manifest.size
     info = manifest["directory_1"]
@@ -64,6 +64,23 @@ class GenosaurusBaseTest < Test::Unit::TestCase
     info = manifest["template_1"]
     assert_equal File.join(File.dirname(__FILE__), "lib", "strawberry_fields_generator", "templates", "fields.txt"), info["template_path"]
     assert_equal "beatles/albums/magical_mystery_tour/lyrics/strawberry_fields_forever.lyrics", info["output_path"]
+  end
+  
+  def clean_tmp
+    if @generator
+      @generator.manifest.each_value do |info|
+        FileUtils.rm_rf(info["output_path"], :verbose => false)
+      end
+    end
+    FileUtils.rm_rf("beatles", :verbose => false)
+  end
+  
+  def setup
+    clean_tmp
+  end
+  
+  def teardown
+    clean_tmp
   end
   
 end
