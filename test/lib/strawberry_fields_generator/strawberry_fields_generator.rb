@@ -1,2 +1,2 @@
-class StrawberryFieldsGenerator < Genosaurus::Base
+class StrawberryFieldsGenerator < Genosaurus
 end

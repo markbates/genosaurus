@@ -34,7 +34,7 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   end
   
   def test_require_param
-    assert_raise(Genosaurus::Errors::RequiredGeneratorParameterMissing) { HelloGoodbyeGenerator.new }
+    assert_raise(ArgumentError) { HelloGoodbyeGenerator.new }
     @generator = HelloGoodbyeGenerator.new("name" => :foo)
     assert_not_nil @generator
     assert_equal :foo, @generator.param(:name)    

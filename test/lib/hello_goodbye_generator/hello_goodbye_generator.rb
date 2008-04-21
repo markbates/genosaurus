@@ -1,3 +1,3 @@
-class HelloGoodbyeGenerator < Genosaurus::Base
+class HelloGoodbyeGenerator < Genosaurus
   require_param :name
 end

@@ -1,2 +1,2 @@
-class IAmTheWalrusGenerator < Genosaurus::Base
+class IAmTheWalrusGenerator < Genosaurus
 end
