@@ -1,1 +1,5 @@
-# Put your gem code here:
+require 'rubygems'
+require 'mack_ruby_core_extensions'
+require 'errors'
+require 'base'
+require 'erb'

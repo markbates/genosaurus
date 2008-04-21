@@ -32,7 +32,7 @@ gem_spec = Gem::Specification.new do |s|
   #s.bindir = "bin"
   #s.executables << "genosaurus"
   #s.default_executable = ""
-  #s.add_dependency("", "")
+  s.add_dependency("mack_ruby_core_extensions")
   #s.add_dependency("", "")
   #s.extensions << ""
   #s.extra_rdoc_files = ["README"]
