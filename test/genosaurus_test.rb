@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 class GenosaurusBaseTest < Test::Unit::TestCase
   
   def test_simple_implied_generator
-    hello_file = "hello_world.rb"
-    goodbye_file = "goodbye_world.rb"
+    hello_file = File.join($genosaurus_output_directory, "hello_world.rb")
+    goodbye_file = File.join($genosaurus_output_directory, "goodbye_world.rb")
     assert !File.exists?(hello_file)
     assert !File.exists?(goodbye_file)
     @generator = HelloGoodbyeGenerator.run("name" => "Mark")
@@ -41,8 +41,8 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   end
   
   def test_complex_implied_generator
-    album_dir = File.join("beatles", "albums")
-    lyrics_file = File.join("beatles", "lyrics", "i_am_the_walrus.txt")
+    album_dir = File.join($genosaurus_output_directory, "beatles", "albums")
+    lyrics_file = File.join($genosaurus_output_directory, "beatles", "lyrics", "i_am_the_walrus.txt")
     assert !File.exists?(album_dir)
     assert !File.exists?(lyrics_file)
     @generator = IAmTheWalrusGenerator.run("name" => "i_am_the_walrus")
@@ -67,12 +67,7 @@ class GenosaurusBaseTest < Test::Unit::TestCase
   end
   
   def clean_tmp
-    if @generator
-      @generator.manifest.each_value do |info|
-        FileUtils.rm_rf(info["output_path"], :verbose => false)
-      end
-    end
-    FileUtils.rm_rf("beatles", :verbose => false)
+    FileUtils.rm_rf($genosaurus_output_directory, :verbose => false)
   end
   
   def setup

@@ -3,8 +3,12 @@ require 'fileutils'
 require File.join(File.dirname(__FILE__), "..", "lib", "genosaurus")
 # place common methods, assertions, and other type things in this file so
 # other tests will have access to them.
-PWD = FileUtils.pwd
-TMP = File.join(PWD, "tmp")
+
+if $genosaurus_output_directory.nil?
+  $genosaurus_output_directory = File.join(FileUtils.pwd, "tmp")
+end
+
+puts "$genosaurus_output_directory: #{$genosaurus_output_directory}"
 
 Dir.glob(File.join(File.dirname(__FILE__), "lib", "**/*.rb")).each {|f| require f}
 

@@ -5,10 +5,6 @@ module Genosaurus
   # Example:
   #   class MyCoolGenerator < Genosaurus::Base
   #     require_param :name, :foo
-  #     
-  #     def generate
-  #       # do work...
-  #     end
   #   end
   # 
   #   rake generate:my_cool # => calls MyCoolGenerator
@@ -56,41 +52,57 @@ module Genosaurus
       # does nothing, unless overridden in subclass.
     end
     
+    def before_generate
+    end
+    
+    def after_generate
+    end
+    
     def generate
-      man = manifest
-      man.each_value do |info|
-        case info["type"]
-        when "file"
-          template(info["template_path"], info["output_path"])
-        when "directory"
-          directory(info["output_path"])
-        else
-          raise "Unknown 'type': #{info["type"]}!"
+      generate_callbacks do
+        manifest.each_value do |info|
+          case info["type"]
+          when "file"
+            template(info["template_path"], info["output_path"])
+          when "directory"
+            directory(info["output_path"])
+          else
+            raise "Unknown 'type': #{info["type"]}!"
+          end
         end
       end
     end
     
+    def generate_callbacks
+      before_generate
+      yield
+      after_generate
+    end
+    
     def manifest
-      yml = File.join(generator_directory_path, "manifest.yml")
-      if File.exists?(yml)
-        # run using the yml file
-        template = ERB.new(File.open(yml).read)
-        man = YAML.load(template.result(binding))
-      else
-        files = Dir.glob(File.join(generator_directory_path, "**/*.template"))
-        man = {}
-        files.each_with_index do |f, i|
-          output_path = f.gsub(File.join(generator_directory_path, "templates"), "")
-          output_path.gsub!(".template", "")
-          output_path.gsub!(/^\//, "")
-          man["template_#{i+1}"] = {
-            "type" => File.directory?(f) ? "directory" : "file",
-            "template_path" => f,
-            "output_path" => ERB.new(output_path).result(binding)
-          }
+      ivar_cache do 
+        yml = File.join(generator_directory_path, "manifest.yml")
+        if File.exists?(yml)
+          # run using the yml file
+          template = ERB.new(File.open(yml).read, nil, "->")
+          man = YAML.load(template.result(binding))
+        else
+          files = Dir.glob(File.join(generator_directory_path, "**/*.template"))
+          man = {}
+          files.each_with_index do |f, i|
+            output_path = f.gsub(File.join(generator_directory_path, "templates"), "")
+            output_path.gsub!(".template", "")
+            output_path.gsub!(/^\//, "")
+            man["template_#{i+1}"] = {
+              "type" => File.directory?(f) ? "directory" : "file",
+              "template_path" => f,
+              "output_path" => ERB.new(output_path, nil, "->").result(binding)
+            }
+          end
         end
+        # puts man.inspect
+        man
       end
-      man
     end
     
     
@@ -123,12 +135,20 @@ module Genosaurus
       end
       # incase the directory doesn't exist, let's create it.
       directory(File.dirname(output_file))
+      # puts "input_file: #{input_file}"
+      # puts "output_file: #{output_file}"
+      if $genosaurus_output_directory
+        output_file = File.join($genosaurus_output_directory, output_file) 
+      end
       File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
       puts "Wrote: #{output_file}"
     end
     
     # Creates the specified directory.
     def directory(output_dir, options = @options)
+      if $genosaurus_output_directory
+        output_dir = File.join($genosaurus_output_directory, output_dir) 
+      end
       if File.exists?(output_dir)
         puts "Exists: #{output_dir}"
         return
@@ -136,19 +156,6 @@ module Genosaurus
       mkdir_p(output_dir)
       puts "Created: #{output_dir}"
     end 
-    # 
-    # def columns(name = param(:name))
-    #   ivar_cache("form_columns") do
-    #     cs = []
-    #     cols = (param(:cols) || param(:columns))
-    #     if cols
-    #       cols.split(",").each do |x|
-    #         cs << Genosaurus::Generator::ModelColumn.new(name, x)
-    #       end
-    #     end
-    #     cs
-    #   end
-    # end
           
   end # Base
 end # Genosaurus
