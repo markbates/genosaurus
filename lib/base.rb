@@ -18,7 +18,7 @@ module Genosaurus
     
     class << self
       
-      def run(options = {})
+      def run(options = ENV.to_hash)
         gen = self.new(options)
         gen.generate
       end
@@ -43,6 +43,14 @@ module Genosaurus
       setup
     end
     
+    def generator_file_path
+      @generator_file_path
+    end
+    
+    def generator_directory_path
+      @generator_directory_path
+    end
+    
     def setup
       # does nothing, unless overridden in subclass.
     end
@@ -53,9 +61,9 @@ module Genosaurus
         puts "info: #{info.inspect}"
         case info["type"]
         when "file"
-          template(info["original_path"], info["new_path"])
+          template(info["template_path"], info["output_path"])
         when "directory"
-          
+          directory(info["output_path"])
         else
           raise "Unknown 'type': #{info["type"]}!"
         end
@@ -63,21 +71,23 @@ module Genosaurus
     end
     
     def manifest
-      yml = File.join(@generator_file_path, "manifest.yml")
+      yml = File.join(generator_directory_path, "manifest.yml")
       if File.exists?(yml)
         # run using the yml file
+        template = ERB.new(File.open(yml).read)
+        man = YAML.load(template.result(binding))
       else
-        files = Dir.glob(File.join(@generator_directory_path, "**/*.template"))
+        files = Dir.glob(File.join(generator_directory_path, "**/*.template"))
         # puts files.inspect
         man = {}
         files.each_with_index do |f, i|
-          new_path = f.gsub(File.join(@generator_directory_path, "templates"), "")
-          new_path.gsub!(".template", "")
-          new_path.gsub!(/^\//, "")
+          output_path = f.gsub(File.join(generator_directory_path, "templates"), "")
+          output_path.gsub!(".template", "")
+          output_path.gsub!(/^\//, "")
           man["template_#{i+1}"] = {
             "type" => File.directory?(f) ? "directory" : "file",
-            "original_path" => f,
-            "new_path" => new_path
+            "template_path" => f,
+            "output_path" => ERB.new(output_path).result(binding)
           }
         end
       end
@@ -101,10 +111,7 @@ module Genosaurus
     def param(key)
       (@options[key.to_s.downcase] ||= @options[key.to_s.upcase])
     end
-    # 
-    # # Needs to be implemented by the subclass.
-    # needs_method :generate
-    # 
+
     # Takes an input_file runs it through ERB and 
     # saves it to the specified output_file. If the output_file exists it will
     # be skipped. If you would like to force the writing of the file, use the
@@ -116,20 +123,21 @@ module Genosaurus
           return
         end
       end
-      output_file = ERB.new(output_file).result(binding)
+      # incase the directory doesn't exist, let's create it.
+      directory(File.dirname(output_file))
       File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
       puts "Wrote: #{output_file}"
     end
-    # 
-    # # Creates the specified directory.
-    # def directory(output_dir, options = {})
-    #   if File.exists?(output_dir)
-    #     puts "Exists: #{output_dir}"
-    #     return
-    #   end
-    #   mkdir_p(output_dir)
-    #   puts "Created: #{output_dir}"
-    # end
+    
+    # Creates the specified directory.
+    def directory(output_dir, options = @options)
+      if File.exists?(output_dir)
+        puts "Exists: #{output_dir}"
+        return
+      end
+      mkdir_p(output_dir)
+      puts "Created: #{output_dir}"
+    end 
     # 
     # def columns(name = param(:name))
     #   ivar_cache("form_columns") do
