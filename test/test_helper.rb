@@ -6,10 +6,14 @@ require File.join(File.dirname(__FILE__), "..", "lib", "genosaurus")
 
 TMP = File.join(File.dirname(__FILE__), "tmp")
 
+Dir.glob(File.join(File.dirname(__FILE__), "lib", "**/*.rb")).each {|f| require f}
+
 class Test::Unit::TestCase
   
   def clean_tmp
     FileUtils.rm_rf(TMP)
+    FileUtils.mkdir_p(TMP)
+    FileUtils.cd(TMP)
   end
   
   def setup

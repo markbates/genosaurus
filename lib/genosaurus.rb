@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'mack_ruby_core_extensions'
+require 'fileutils'
 require 'errors'
 require 'base'
 require 'erb'
