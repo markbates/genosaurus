@@ -4,22 +4,13 @@ require 'fileutils'
 require 'erb'
 require 'yaml'
 
-
-# All generator classes should extend this class if they're expected to be used by the rake generate:<generator_name> task.
-# A generator must by name in the following style: <name>Generator. 
-# 
-# Example:
-#   class MyCoolGenerator < Genosaurus
-#     require_param :name, :foo
-#   end
-# 
-#   rake generate:my_cool # => calls MyCoolGenerator
 class Genosaurus
 
   include FileUtils
   
   class << self
     
+    # Instantiates a new Genosaurus, passing the ENV hash as options into it, runs the generate method, and returns the Genosaurus object.
     def run(options = ENV.to_hash)
       gen = self.new(options)
       gen.generate
@@ -28,6 +19,8 @@ class Genosaurus
     
   end
   
+  # Takes any options needed for this generator. If the generator requires any parameters an ArgumentError exception will be
+  # raised if those parameters are found in the options Hash. The setup method is called at the end of the initialization.
   def initialize(options = {})
     @options = options
     self.class.required_params.each do |p|
@@ -35,47 +28,62 @@ class Genosaurus
     end
     @generator_name = self.class.name
     @generator_name_underscore = @generator_name.underscore
-    @generator_file_path = nil
-    @generator_directory_path = nil
+    @templates_directory_path = nil
+    @manifest_path = nil
     $".each do |f|
       if f.match(/#{@generator_name_underscore}\.rb$/)
-        @generator_file_path = f
-        @generator_directory_path = File.dirname(@generator_file_path)
+        @templates_directory_path = File.join(File.dirname(f), "templates")
+        @manifest_path = File.join(File.dirname(f), "manifest.yml")
       end
     end
     setup
   end
   
-  def generator_file_path
-    @generator_file_path
+  # Returns the path to the templates directory.
+  # IMPORTANT: The location of the templates_directory_path is VERY important! Genosaurus will attempt to find this location
+  # automatically, HOWEVER, if there is a problem, or you want to be special, you can override this method in your generator
+  # and have it return the correct path.
+  def templates_directory_path
+    @templates_directory_path
   end
   
-  def generator_directory_path
-    @generator_directory_path
+  # Returns the path to the manifest.yml. This is only used if you have a manifest.yml file, if there is no file, or this
+  # method returns nil, then an implied manifest is used based on the templates_directory_path contents.
+  # IMPORTANT: Genosaurus will attempt to find this location automatically, HOWEVER, if there is a problem, or you want to 
+  # be special, you can override this method in your generator and have it return the correct path.
+  def manifest_path
+    @manifest_path
   end
   
+  # To be overridden in subclasses to do any setup work needed by the generator.
   def setup
     # does nothing, unless overridden in subclass.
   end
   
+  # To be overridden in subclasses to do work before the generate method is run.
   def before_generate
   end
   
+  # To be overridden in subclasses to do work after the generate method is run.
+  # This is a simple way to call other generators.
   def after_generate
   end
   
+  # Returns the manifest for this generator, which is used by the generate method to do the dirty work.
+  # If there is a manifest.yml, defined by the manifest_path method, then the contents of that file are processed
+  # with ERB and returned. If there is not manifest.yml then an implied manifest is generated from the contents
+  # of the templates_directory_path.
   def manifest
     ivar_cache do 
-      yml = File.join(generator_directory_path, "manifest.yml")
-      if File.exists?(yml)
+      if File.exists?(manifest_path)
         # run using the yml file
-        template = ERB.new(File.open(yml).read, nil, "->")
+        template = ERB.new(File.open(manifest_path).read, nil, "->")
         man = YAML.load(template.result(binding))
       else
-        files = Dir.glob(File.join(generator_directory_path, "**/*.template"))
+        files = Dir.glob(File.join(templates_directory_path, "**/*.template"))
         man = {}
         files.each_with_index do |f, i|
-          output_path = f.gsub(File.join(generator_directory_path, "templates"), "")
+          output_path = f.gsub(templates_directory_path, "")
           output_path.gsub!(".template", "")
           output_path.gsub!(/^\//, "")
           man["template_#{i+1}"] = {
@@ -141,7 +149,8 @@ class Genosaurus
     mkdir_p(output_dir)
     puts "Created: #{output_dir}"
   end
-
+  
+  # This does the dirty work of generation.
   def generate
     generate_callbacks do
       manifest.each_value do |info|
