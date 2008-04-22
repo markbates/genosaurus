@@ -66,6 +66,13 @@ class GenosaurusBaseTest < Test::Unit::TestCase
     assert_equal "beatles/albums/magical_mystery_tour/lyrics/strawberry_fields_forever.lyrics", info["output_path"]
   end
   
+  def test_directory
+    @generator = DirectoryGenerator.run
+    assert File.exists?(File.join($genosaurus_output_directory, "months", "january"))
+    assert File.exists?(File.join($genosaurus_output_directory, "months", "february"))
+    assert File.exists?(File.join($genosaurus_output_directory, "months", "march"))
+  end
+  
   def clean_tmp
     FileUtils.rm_rf($genosaurus_output_directory, :verbose => false)
   end
