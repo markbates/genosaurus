@@ -10,7 +10,7 @@ require 'rubygems/gem_runner'
 
 GEM_VERSION = "1.1.1"
 GEM_NAME = "genosaurus"
-GEM_RUBYFORGE_PROJECT = "genosaurus"
+GEM_RUBYFORGE_PROJECT = "magrathea"
 
 gem_spec = Gem::Specification.new do |s|
   s.name = GEM_NAME
