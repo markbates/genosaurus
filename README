@@ -69,6 +69,9 @@ Now you should end up with the following:
       
 In the ComplexGenerator we told Genosaurus that we are requiring that the parameter, name, be passed into it. We are then using that parameter to generate the names of some files and folders. Pretty cool, eh? See how simple that is.
 
+===Explicit Manifests
+Explicit manifests are used when there is a manifest.yml supplied at the same level as the generator. If there is a manifest.yml file then implied manifests are not used. This means you have to define the entire generation process. This is great if you have a pretty complicated generator, as the manifest.yml is also sent through ERB before being loaded.
+
 Let's look at the manifest.yml file for our simple_generator example:
 
   template_1:
@@ -98,9 +101,6 @@ Our manifest.yml file would look like this:
     output_path: <%= File.join("app", "models", "#{param(:name)}.rb") %>
     
 This will generate the exact same thing as our implied manifest.
-
-===Explicit Manifests
-Explicit manifests are used when there is a manifest.yml supplied at the same level as the generator. If there is a manifest.yml file then implied manifests are not used. This means you have to define the entire generation process. This is great if you have a pretty complicated generator, as the manifest.yml is also sent through ERB before being loaded.
 
 ==Contact
 Please mail bugs, suggestions and patches to <bugs@mackframework.com>.
