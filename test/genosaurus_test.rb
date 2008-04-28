@@ -73,6 +73,12 @@ class GenosaurusBaseTest < Test::Unit::TestCase
     assert File.exists?(File.join($genosaurus_output_directory, "months", "march"))
   end
   
+  def test_copy
+    assert !File.exists?(File.join($genosaurus_output_directory, "hw.txt"))
+    @generator = CopyMachineGenerator.run
+    assert File.exists?(File.join($genosaurus_output_directory, "hw.txt"))
+  end
+  
   def clean_tmp
     FileUtils.rm_rf($genosaurus_output_directory, :verbose => false)
   end

@@ -120,19 +120,7 @@ class Genosaurus
   # be skipped. If you would like to force the writing of the file, use the
   # :force => true option.
   def template(input_file, output_file, options = @options)
-    if File.exists?(output_file)
-      unless options[:force]
-        puts "Skipped: #{output_file}"
-        return
-      end
-    end
-    # incase the directory doesn't exist, let's create it.
-    directory(File.dirname(output_file))
-    # puts "input_file: #{input_file}"
-    # puts "output_file: #{output_file}"
-    if $genosaurus_output_directory
-      output_file = File.join($genosaurus_output_directory, output_file) 
-    end
+    output_file = template_copy_common(output_file, options)
     File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
     puts "Wrote: #{output_file}"
   end
@@ -150,6 +138,12 @@ class Genosaurus
     puts "Created: #{output_dir}"
   end
   
+  def copy(input_file, output_file, options = @options)
+    output_file = template_copy_common(output_file, options)
+    FileUtils.cp(input_file, output_file)
+    puts "Copied: #{output_file}"
+  end
+  
   # This does the dirty work of generation.
   def generate
     generate_callbacks do
@@ -159,6 +153,8 @@ class Genosaurus
           template(info["template_path"], info["output_path"])
         when "directory"
           directory(info["output_path"])
+        when "copy"
+          copy(info["template_path"], info["output_path"])
         else
           raise "Unknown 'type': #{info["type"]}!"
         end
@@ -177,6 +173,21 @@ class Genosaurus
     before_generate
     yield
     after_generate
+  end
+  
+  def template_copy_common(output_file, options)
+    if File.exists?(output_file)
+      unless options[:force]
+        puts "Skipped: #{output_file}"
+        return
+      end
+    end
+    # incase the directory doesn't exist, let's create it.
+    directory(File.dirname(output_file))
+    if $genosaurus_output_directory
+      output_file = File.join($genosaurus_output_directory, output_file) 
+    end
+    output_file
   end
   
 end # Genosaurus

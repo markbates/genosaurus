@@ -8,7 +8,7 @@ require 'rubyforge'
 require 'rubygems'
 require 'rubygems/gem_runner'
 
-GEM_VERSION = "1.1.2"
+GEM_VERSION = "1.1.3"
 GEM_NAME = "genosaurus"
 GEM_RUBYFORGE_PROJECT = "magrathea"
 
