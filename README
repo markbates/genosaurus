@@ -31,7 +31,7 @@ We should get a file called hello_world.txt generated in the current directory. 
 
 With implied manifests our directory structure under 'templates' tells the whole story, and Genosaurus is smart enough to figure it out. All the file names, and the same goes for folders, need to end in .template, and Genosaurus will do the rest.
 
-All the files will go through ERB before they generated, so you can put all your lovely little dynamic goodies in there. File, and folder, names also get run through ERB so you can even make the file name dynamic too!
+All the files will go through ERB before they generated, so you can put all your lovely little dynamic goodies in there. File, and folder, names also get run through ERB so you can even make the file name dynamic too! The caveat to that is that it's a modified version of ERB for the file names. The syntax is just %= ... % and not <%= ... %>. It's just a little easier on the file system.
 
 Let's look at a more complex example:
 
@@ -40,10 +40,10 @@ Let's look at a more complex example:
     templates:
       app:
         views:
-          <%=param(:name).plural%>.template:
+          %=param(:name).plural%.template: # or %=name.plural%.rb.template 
             hello_world.html.erb
         models:
-          <%=param(:name)%>.rb.template
+          %=param(:name)%.rb.template # or %=name%.rb.template
     
 Let's run our complex_generator.rb file:
 

@@ -3,6 +3,7 @@ require 'mack_ruby_core_extensions'
 require 'fileutils'
 require 'erb'
 require 'yaml'
+require 'erubis'
 
 class Genosaurus
 
@@ -89,7 +90,7 @@ class Genosaurus
           man["template_#{i+1}"] = {
             "type" => File.directory?(f) ? "directory" : "file",
             "template_path" => f,
-            "output_path" => ERB.new(output_path, nil, "->").result(binding)
+            "output_path" => Erubis::Eruby.new(output_path, :pattern => '% %').result(binding)
           }
         end
       end
@@ -97,7 +98,6 @@ class Genosaurus
       man
     end
   end
-  
   
   # Used to define arguments that are required by the generator.
   def self.require_param(*args)
@@ -164,6 +164,12 @@ class Genosaurus
         end
       end
     end
+  end
+  
+  def method_missing(sym, *args)
+    p = param(sym)
+    return p if p
+    raise NoMethodError.new(sym)
   end
   
   private

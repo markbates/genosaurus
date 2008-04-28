@@ -8,7 +8,7 @@ require 'rubyforge'
 require 'rubygems'
 require 'rubygems/gem_runner'
 
-GEM_VERSION = "1.1.1"
+GEM_VERSION = "1.1.2"
 GEM_NAME = "genosaurus"
 GEM_RUBYFORGE_PROJECT = "magrathea"
 
@@ -16,7 +16,7 @@ gem_spec = Gem::Specification.new do |s|
   s.name = GEM_NAME
   s.version = GEM_VERSION
   s.summary = "#{GEM_NAME}"
-  s.description = "#{GEM_NAME} was developed by: markbates"
+  s.description = "Genosaurus is meant to be a very, very easy to use generation system for Ruby."
   s.author = "markbates"
   s.email = "mark@markbates.com"
   s.homepage = "http://www.mackframework.com"
@@ -25,22 +25,11 @@ gem_spec = Gem::Specification.new do |s|
 
   s.files = FileList['lib/**/*.rb', 'README', 'doc/**/*.*', 'bin/**/*.*']
   s.require_paths << 'lib'
-  
-  # This has been removed in RubyGems in 1.0, so I would STRONGLY recommend not using it!
-  s.autorequire = "genosaurus"
 
-  #s.bindir = "bin"
-  #s.executables << "genosaurus"
-  #s.default_executable = ""
   s.add_dependency("mack_ruby_core_extensions")
-  #s.add_dependency("", "")
-  #s.extensions << ""
-  #s.extra_rdoc_files = ["README"]
+  s.add_dependency("erubis")
+  s.extra_rdoc_files = ["README"]
   s.has_rdoc = true
-  #s.platform = "Gem::Platform::Ruby"
-  #s.required_ruby_version = ">= 1.8.5"
-  #s.requirements << "An ice cold beer."
-  #s.requirements << "Some free time!"
   s.rubyforge_project = GEM_RUBYFORGE_PROJECT
 end
 
