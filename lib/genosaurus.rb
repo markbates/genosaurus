@@ -121,8 +121,10 @@ class Genosaurus
   # :force => true option.
   def template(input_file, output_file, options = @options)
     output_file = template_copy_common(output_file, options)
-    File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
-    puts "Wrote: #{output_file}"
+    unless output_file.nil?
+      File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
+      puts "Wrote: #{output_file}"
+    end
   end
   
   # Creates the specified directory.
@@ -179,7 +181,7 @@ class Genosaurus
     if File.exists?(output_file)
       unless options[:force]
         puts "Skipped: #{output_file}"
-        return
+        return nil
       end
     end
     # incase the directory doesn't exist, let's create it.
