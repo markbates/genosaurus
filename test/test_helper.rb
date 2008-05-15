@@ -6,6 +6,7 @@ require File.join(File.dirname(__FILE__), "..", "lib", "genosaurus")
 
 if $genosaurus_output_directory.nil?
   $genosaurus_output_directory = File.join(FileUtils.pwd, "tmp")
+  FileUtils.mkdir_p($genosaurus_output_directory)
 end
 
 puts "$genosaurus_output_directory: #{$genosaurus_output_directory}"
