@@ -36,6 +36,8 @@ class Genosaurus
         @templates_directory_path = File.join(File.dirname(f), "templates")
         @manifest_path = File.join(File.dirname(f), "manifest.yml")
       end
+    else
+      raise "Unable to dynamically figure out your templates_directory_path and manifest_path! Please implement these methods and let Genosaurus know where to find these things. Thanks."
     end
     setup
   end
