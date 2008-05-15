@@ -1,6 +1,6 @@
 =Hello, and welcome to Genosaurus!
 
-Genosaurus is meant to be a very, very easy to use generation system for Ruby. It's simple and straightforward, yet offers plenty of flexibility in it's use. People use 'generators' all the time, and you either have to roll your own, or use some really cumbersome generator that some one else wrote, that is just way too difficult to use. Enter Genosaurus!
+Genosaurus is meant to be a very, very easy to use generation system for Ruby. It's simple and straightforward, yet offers plenty of flexibility in it's use. People use 'generators' all the time, and you either have to roll your own, or use some really cumbersome generator that some one else wrote, that is just way too difficult to use. Enter Genosaurus! 
 
 ==Installation
   $ sudo gem install genosaurus
