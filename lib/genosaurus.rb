@@ -1,9 +1,13 @@
 require 'rubygems'
-require 'mack_ruby_core_extensions'
+require 'facets/style'
 require 'fileutils'
 require 'erb'
 require 'yaml'
 require 'erubis'
+
+# class String
+#   include Style
+# end
 
 class Genosaurus
 
@@ -28,7 +32,8 @@ class Genosaurus
       raise ::ArgumentError.new("The required parameter '#{p.to_s.upcase}' is missing for this generator!") unless param(p)
     end
     @generator_name = self.class.name
-    @generator_name_underscore = @generator_name.underscore
+    @generator_name_underscore = String::Style.underscore(@generator_name)#.underscore
+    puts "@generator_name_underscore: #{@generator_name_underscore}"
     @templates_directory_path = nil
     @manifest_path = nil
     $".each do |f|

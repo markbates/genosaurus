@@ -26,7 +26,7 @@ gem_spec = Gem::Specification.new do |s|
   s.files = FileList['lib/**/*.rb', 'README', 'doc/**/*.*', 'bin/**/*.*']
   s.require_paths << 'lib'
 
-  s.add_dependency("mack_ruby_core_extensions")
+  s.add_dependency("facets")
   s.add_dependency("erubis")
   s.extra_rdoc_files = ["README"]
   s.has_rdoc = true
