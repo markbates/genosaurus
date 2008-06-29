@@ -85,6 +85,9 @@ class Genosaurus
   # with ERB and returned. If there is not manifest.yml then an implied manifest is generated from the contents
   # of the templates_directory_path.
   def manifest
+    if templates_directory_path.nil? || manifest_path.nil?
+      raise "Unable to dynamically figure out your templates_directory_path and manifest_path!\nPlease implement these methods and let Genosaurus know where to find these things. Thanks."
+    end
     if File.exists?(manifest_path)
       # run using the yml file
       template = ERB.new(File.open(manifest_path).read, nil, "->")
@@ -103,6 +106,7 @@ class Genosaurus
         }
       end
     end
+    # puts man.inspect
     man
   end
   
