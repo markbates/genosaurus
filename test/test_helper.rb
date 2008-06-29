@@ -13,6 +13,12 @@ puts "$genosaurus_output_directory: #{$genosaurus_output_directory}"
 
 Dir.glob(File.join(File.dirname(__FILE__), "lib", "**/*.rb")).each {|f| require f}
 
+class String
+  def capitalize_all_words
+    self.gsub(/\b\w/) {|s| s.upcase}
+  end
+end
+
 class Test::Unit::TestCase
   
 end

@@ -8,7 +8,7 @@ require 'rubyforge'
 require 'rubygems'
 require 'rubygems/gem_runner'
 
-GEM_VERSION = "1.1.7"
+GEM_VERSION = "1.1.8"
 GEM_NAME = "genosaurus"
 GEM_RUBYFORGE_PROJECT = "magrathea"
 
@@ -26,7 +26,6 @@ gem_spec = Gem::Specification.new do |s|
   s.files = FileList['lib/**/*.rb', 'README', 'doc/**/*.*', 'bin/**/*.*']
   s.require_paths << 'lib'
 
-  s.add_dependency("facets")
   s.add_dependency("erubis")
   s.extra_rdoc_files = ["README"]
   s.has_rdoc = true

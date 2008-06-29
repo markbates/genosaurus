@@ -1,13 +1,19 @@
 require 'rubygems'
-require 'facets/style'
 require 'fileutils'
 require 'erb'
 require 'yaml'
 require 'erubis'
 
-# class String
-#   include Style
-# end
+class String
+  def underscore
+    camel_cased_word = self.dup
+    camel_cased_word.to_s.gsub(/::/, '/').
+      gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+      gsub(/([a-z\d])([A-Z])/,'\1_\2').
+      tr("-", "_").
+      downcase
+  end
+end
 
 class Genosaurus
 
@@ -32,8 +38,7 @@ class Genosaurus
       raise ::ArgumentError.new("The required parameter '#{p.to_s.upcase}' is missing for this generator!") unless param(p)
     end
     @generator_name = self.class.name
-    @generator_name_underscore = String::Style.underscore(@generator_name)#.underscore
-    puts "@generator_name_underscore: #{@generator_name_underscore}"
+    @generator_name_underscore = @generator_name.underscore #String::Style.underscore(@generator_name)#.underscore
     @templates_directory_path = nil
     @manifest_path = nil
     $".each do |f|
@@ -83,28 +88,25 @@ class Genosaurus
   # with ERB and returned. If there is not manifest.yml then an implied manifest is generated from the contents
   # of the templates_directory_path.
   def manifest
-    ivar_cache do 
-      if File.exists?(manifest_path)
-        # run using the yml file
-        template = ERB.new(File.open(manifest_path).read, nil, "->")
-        man = YAML.load(template.result(binding))
-      else
-        files = Dir.glob(File.join(templates_directory_path, "**/*.template"))
-        man = {}
-        files.each_with_index do |f, i|
-          output_path = f.gsub(templates_directory_path, "")
-          output_path.gsub!(".template", "")
-          output_path.gsub!(/^\//, "")
-          man["template_#{i+1}"] = {
-            "type" => File.directory?(f) ? "directory" : "file",
-            "template_path" => f,
-            "output_path" => Erubis::Eruby.new(output_path, :pattern => '% %').result(binding)
-          }
-        end
+    if File.exists?(manifest_path)
+      # run using the yml file
+      template = ERB.new(File.open(manifest_path).read, nil, "->")
+      man = YAML.load(template.result(binding))
+    else
+      files = Dir.glob(File.join(templates_directory_path, "**/*.template"))
+      man = {}
+      files.each_with_index do |f, i|
+        output_path = f.gsub(templates_directory_path, "")
+        output_path.gsub!(".template", "")
+        output_path.gsub!(/^\//, "")
+        man["template_#{i+1}"] = {
+          "type" => File.directory?(f) ? "directory" : "file",
+          "template_path" => f,
+          "output_path" => Erubis::Eruby.new(output_path, :pattern => '% %').result(binding)
+        }
       end
-      # puts man.inspect
-      man
     end
+    man
   end
   
   # Used to define arguments that are required by the generator.
