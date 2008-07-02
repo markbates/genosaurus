@@ -189,16 +189,16 @@ class Genosaurus
   end
   
   def template_copy_common(output_file, options)
+    # incase the directory doesn't exist, let's create it.
+    directory(File.dirname(output_file))
+    if $genosaurus_output_directory
+      output_file = File.join($genosaurus_output_directory, output_file) 
+    end
     if File.exists?(output_file)
       unless options[:force]
         puts "Skipped: #{output_file}"
         return nil
       end
-    end
-    # incase the directory doesn't exist, let's create it.
-    directory(File.dirname(output_file))
-    if $genosaurus_output_directory
-      output_file = File.join($genosaurus_output_directory, output_file) 
     end
     output_file
   end
