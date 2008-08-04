@@ -133,7 +133,8 @@ class Genosaurus
   def template(input_file, output_file, options = @options)
     output_file = template_copy_common(output_file, options)
     unless output_file.nil?
-      File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
+      # File.open(output_file, "w") {|f| f.puts ERB.new(File.open(input_file).read, nil, "->").result(binding)}
+      File.open(output_file, "w") {|f| f.puts ERB.new(input_file, nil, "->").result(binding)}
       puts "Wrote: #{output_file}"
     end
   end
@@ -163,7 +164,7 @@ class Genosaurus
       manifest.each_value do |info|
         case info["type"]
         when "file"
-          template(info["template_path"], info["output_path"])
+          template(File.open(info["template_path"]).read, info["output_path"])
         when "directory"
           directory(info["output_path"])
         when "copy"
