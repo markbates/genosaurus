@@ -10,6 +10,14 @@ describe Genosaurus do
     clean_tmp
   end
   
+  it "should describe it's required parameters" do
+    desc = ManyRequiresGenerator.describe
+    desc.should match(/ManyRequiresGenerator/)
+    desc.should match(/Required Parameter: 'first_name'/)
+    desc.should match(/Required Parameter: 'last_name'/)
+    desc.should match(/This generator requires many things/)
+  end
+  
   it "test_simple_implied_generator" do
     hello_file = File.join($genosaurus_output_directory, "hello_world.rb")
     goodbye_file = File.join($genosaurus_output_directory, "goodbye_world.rb")

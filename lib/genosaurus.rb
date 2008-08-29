@@ -28,6 +28,25 @@ class Genosaurus
       gen
     end
     
+    # Describes the generator.
+    def describe
+      text = ["#{self}:"]
+      required_params.each do |p|
+        text << "Required Parameter: '#{p.to_s.downcase}'"
+      end
+      dd = description_detail
+      unless dd.nil? || dd == ''
+        text << "---------------"
+        text << dd
+      end
+      text.join("\n")
+    end
+    
+    # Override this method in your generator to append to the describe method.
+    def description_detail
+      ''
+    end
+    
   end
   
   # Takes any options needed for this generator. If the generator requires any parameters an ArgumentError exception will be
