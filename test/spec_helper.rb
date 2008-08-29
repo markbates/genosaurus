@@ -1,5 +1,7 @@
-require "test/unit"
-require 'fileutils'
+require 'rubygems'
+gem 'rspec'
+require 'spec'
+
 require File.join(File.dirname(__FILE__), "..", "lib", "genosaurus")
 # place common methods, assertions, and other type things in this file so
 # other tests will have access to them.
@@ -17,8 +19,4 @@ class String
   def capitalize_all_words
     self.gsub(/\b\w/) {|s| s.upcase}
   end
-end
-
-class Test::Unit::TestCase
-  
 end
