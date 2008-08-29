@@ -12,7 +12,7 @@ require 'spec/rake/spectask'
 
 @gem_spec = Gem::Specification.new do |s|
   s.name = "genosaurus"
-  s.version = "1.2.3"
+  s.version = "1.2.4"
   s.summary = s.name
   s.description = "Genosaurus is meant to be a very, very easy to use generation system for Ruby."
   s.author = "markbates"
