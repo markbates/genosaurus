@@ -37,9 +37,16 @@ describe Genosaurus do
     temp2["output_path"].should == "hello_world.rb"
   end
   
-  it "test_require_param" do
+  it "should take a hash of options and raise an exception for the required ones" do
     lambda { HelloGoodbyeGenerator.new }.should raise_error(ArgumentError)
     @generator = HelloGoodbyeGenerator.new("name" => :foo)
+    @generator.should_not be_nil
+    @generator.param(:name).should == :foo
+  end
+  
+  it "should take an array of options and raise an exception for the required ones" do
+    lambda { HelloGoodbyeGenerator.new }.should raise_error(ArgumentError)
+    @generator = HelloGoodbyeGenerator.new(:foo)
     @generator.should_not be_nil
     @generator.param(:name).should == :foo
   end

@@ -33,6 +33,13 @@ class Genosaurus
   # Takes any options needed for this generator. If the generator requires any parameters an ArgumentError exception will be
   # raised if those parameters are found in the options Hash. The setup method is called at the end of the initialization.
   def initialize(options = {})
+    unless options.is_a?(Hash)
+      opts = [options].flatten
+      options = {}
+      self.class.required_params.each_with_index do |p, i|
+        options[p.to_s] = opts[i]
+      end
+    end
     @options = options
     self.class.required_params.each do |p|
       raise ::ArgumentError.new("The required parameter '#{p.to_s.upcase}' is missing for this generator!") unless param(p)
